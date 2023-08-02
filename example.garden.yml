@@ -1,0 +1,23 @@
+kind: ModuleTemplate
+name: my-template
+inputsSchemaPath: schema.json
+modules:
+  - type: kubernetes
+    name: ${inputs.service-name}
+    description: ${parent.name} manifests
+    tasks: ${inputs.tasks}?
+    serviceResource:
+      kind: Deployment
+    build:
+      dependencies:
+        - bug-module
+    variables:
+      labels:
+        app: ${this.name}
+        service: ${this.name}
+      template-replicas: ${inputs.replicas}
+      image: ${inputs.image}
+    files: [".manifests/.manifests-template.yml"]
+    generateFiles:
+      - sourcePath: manifests-template.yml
+        targetPath: ".manifests/.manifests-template.yml"

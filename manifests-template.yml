@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${var.labels.app}
+  labels: ${jsonEncode(var.labels)}
+spec:
+  replicas: ${var.template-replicas}
+  selector:
+    matchLabels:
+      app: ${this.name}
+      service: ${this.name}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels: ${jsonEncode(var.labels)}
+    spec:
+      containers:
+        - name: ${parent.name}
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+          image: ${var.image}
